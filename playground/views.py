@@ -1,11 +1,9 @@
 from django.shortcuts import render
-from django.db.models import Q, F
-from store.models import Product, OrderItem
+from store.models import Product, Order
+from django.db.models.aggregates import Count, Max, Min, Sum, Avg
 
 
 def say_hello(request):
-    queryset = Product.objects.filter(pk__in=OrderItem.objects.values('product__id').distinct()).order_by('title')
+    result = Product.objects.filter(collection__id=3).aggregate(count=Count('id'), min_price=Min('unit_price'))
 
-    # print(queryset)
-
-    return render(request, 'hello.html', {'name': 'Youssef', 'products': list(queryset)})
+    return render(request, 'hello.html', {'name': 'Youssef', 'result': result})
